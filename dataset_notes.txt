@@ -1,0 +1,117 @@
+URBRRL -> type of living 
+REGION -> household region
+SEX_A -> sex of SA
+EDUCP_A -> education level
+HISPALLP_A -> race
+PCNTADLT_A -> # of adults in household
+PCNTKIDS_A -> # of kids in household
+OVER65FLG_A -> elderly people in household
+MLTFAMFLG_A -> multifamily household
+MAXEDUCP_A -> highest education level in family
+PHSTAT_A -> general health status
+
+GOOD BASES TO GROUPBY
+LSATIS11R_A -> life satisfaction (11 values)
+LSATIS4R_A -> life satisfaction (4 values)
+
+Types of Health Conditions (propose we find most prominent ones)
+- hypertension
+- cholesterol
+- cancer
+- allergies
+- etc.
+
+HEIGHTTC_A -> height (w/out shoes)
+WEIGHTLBTC_A -> weight (w/out shoes)
+
+Senses, Mobility and Communication
+- vision
+- mobility
+- comms
+- cognition
+- social functioning
+- etc.
+
+NOTCOV_A -> healthcare status in US
+there is some stuff in this section that could be interesting if we wanted to look at the importance of free health care from a well-being perspective
+also variables on the difficulty paying for health care
+PAYNOBLLNW_A -> unable to pay bills (stageringly high)
+PAYWORRY_A -> Get sick or have accident, worry about paying medical bills
+
+COVID 19 Information
+
+Utilization of doctors and counselors
+WELLVIS_A -> time since last wellness visit
+USUALPL_A -> usual place to go to for care
+
+Care, illness (like cancer) elayed or no care because of covid
+
+Preventitive Screening
+- blood pressure 
+- cholosterol 
+- colonoscopy
+- etc.
+
+2021 Immunization (vaccines)
+
+Caregiving (recieved or nah cause of covid19)
+
+
+MENTAL HEALTH SECTION:
+anxiety
+
+depression
+
+mental health care
+
+serious psycological distress
+
+chronic pain
+
+repetitive strain injury, injury
+
+loss of sense (smell, taste)
+
+
+SMKCIGST_A -> cigarette smoking status
+SMKECIGST_A -> e-cig use
+
+Social support
+SUPPORT_A -> frequency of support
+CMPSUPPORT_A -> social/emotional support in the last 12 months
+
+ORIENT_A -> sexual orientation
+
+Martial Status
+LEGMSTAT_A -> Legal marital status of sample adult
+SPOUSEDUCP_A -> education of spouse
+SPOUSEWRK_A -> working status of spouse
+
+Veterans Status
+
+Nativity
+
+Schooling
+
+Employment
+EMPWRKLSW1_A -> Worked last week
+EMPWHYNOT_A -> Main reason not working
+EMPLSTWOR1_A -> Last time worked for pay
+EMPWKHRS3_A -> Hours worked per week (topcoded for Public Use)
+EMPWRKFT1_A -> Usually work 35+ hours per week
+EMPSICKLV_A -> Paid sick leave
+EMPHEALINS_A -> Health insurance offered
+
+Job and Taxes
+JOBSHIFT_A -> Usual hours of main job
+JOBCHGSCH_A -> How easy to change work schedule
+JOBVARYSCH_A -> How much does schedule vary
+
+RATCAT_A -> Ratio of family income to poverty threshold for SA's family (Income related to poverty line)
+
+Food Availability Data
+
+Housing Data
+
+
+
