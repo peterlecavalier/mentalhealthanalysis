@@ -38,10 +38,12 @@ class label_parser():
         found_beginning = False
         for line in lines:
             if not found_beginning:
-                if 'Associate variables' in line:
+                if 'define variable' in line:
                     found_beginning = True
             else:
-                if "/*" in line and "*/" in line:
+                if line.strip().replace(' ', '') == 'length':
+                    continue
+                elif "/*" in line and "*/" in line:
                     groups.append(cur_group)
                     cur_group = []
                 elif ";" in line:
@@ -49,9 +51,9 @@ class label_parser():
                     break
                 elif line.strip().replace(' ', '') != '':
                     split_line = line.strip().split(' ')
-                    split_line = [i for i in split_line if i != '']
-                    for i in range(0, len(split_line), 2):
-                        cur_group.append(split_line[i])
+                    split_line = [i for i in split_line if i != '' and not i.isnumeric() and i != '$']
+                    for i in split_line:
+                        cur_group.append(i)
 
         return groups[1:]
     def find_var_label(self, var):
