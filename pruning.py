@@ -15,4 +15,5 @@ print(len(pruned_df.columns))
 lp = label_parser()
 
 for i in pruned_df.columns:
-    print(lp.find_var_label(i))
+    print(f"{i}: {lp.find_var_label(i)}")
+
