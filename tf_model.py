@@ -13,7 +13,9 @@ df = pd.read_csv('adult21.csv')
 
 df = df[['WEIGHTLBTC_A', 'CITZNSTP_A', 'NATUSBORN_A', 'FDSCAT3_A', 
 'EMPWRKLSW1_A', 'INCWRKO_A', 'HOUTENURE_A', 'SUPPORT_A', 'SMKEV_A', 
-'CIGAREV_A', 'AFVET_A', 'INCINTER_A', 'LSATIS11R_A']]
+'CIGAREV_A', 'AFVET_A', 'INCINTER_A', 'ECIGEV_A', 'SCHCURENR_A',
+'MARITAL_A', 'PIPEEV_A',
+'LSATIS11R_A']]
 '''
 WEIGHTLBTC_A:
     -> 100-299 = 100-299 pounds
@@ -75,6 +77,27 @@ INCINTER_A (Income from accounts):
     -> 2 = No
     -> 7 = Refused
     -> 9 = Don't Know
+ECIGEV_A (Ever used e-cigs):
+    -> 1 = Yes
+    -> 2 = No
+    -> 7 = Refused
+    -> 9 = Don't Know
+SCHCURENR_A (Currently in school):
+    -> 1 = Yes
+    -> 2 = No
+    -> 7 = Refused
+    -> 9 = Don't Know
+MARITAL_A:
+    -> 1 = Married
+    -> 2 = Living w/ partner, unmarried
+    -> 3 = Neither
+    -> 7 = Refused
+    -> 9 = Don't Know
+PIPEEV_A (Smoked a pipe filled with tobacco):
+    -> 1 = Yes
+    -> 2 = No
+    -> 7 = Refused
+    -> 9 = Don't Know
 LSATIS11R_A (Life Satisfaction):
     -> 0-10:
     Using a scale of 0 to 10, where 0 means "very dissatisfied" and 10 means "very
@@ -83,14 +106,37 @@ LSATIS11R_A (Life Satisfaction):
 
 print(df.shape)
 # Drop missing values for each of our columns
+'''
 df = df.drop(df[(df['WEIGHTLBTC_A'] == 996) | (df['CITZNSTP_A'] == 8)
 | (df['NATUSBORN_A'] == 8) | (df['FDSCAT3_A'] == 8) | (df['INCWRKO_A'] == 8)
 | (df['HOUTENURE_A'] == 8) | (df['SUPPORT_A'] == 8) | (df['SMKEV_A'] == 8)
 | (df['CIGAREV_A'] == 8) | (df['AFVET_A'] == 8) | (df['INCINTER_A'] == 8)
+| (df['ECIGEV_A'] == 8) | (df['SCHCURENR_A'] == 8) | (df['MARITAL_A'] == 8)
+| (df['PIPEEV_A'] == 8)
 | (df['LSATIS11R_A'] > 10)].index)
+'''
+
+
+df = df.drop(df[(df['WEIGHTLBTC_A'] > 300) | (df['CITZNSTP_A'] > 2)
+| (df['NATUSBORN_A'] > 2) | (df['FDSCAT3_A'] == 8) | (df['INCWRKO_A'] > 2)
+| (df['HOUTENURE_A'] > 3) | (df['SUPPORT_A'] > 5) | (df['SMKEV_A'] > 2)
+| (df['CIGAREV_A'] > 2) | (df['AFVET_A'] > 2) | (df['INCINTER_A'] > 2)
+| (df['ECIGEV_A'] > 2) | (df['SCHCURENR_A'] > 2) | (df['MARITAL_A'] > 3)
+| (df['PIPEEV_A'] > 2)
+| (df['LSATIS11R_A'] > 10)].index)
+
+
+
 print(df.shape)
 
 train, test = train_test_split(df, test_size=0.2)
+
+# Get the correct columns for training
+train_x = train.drop('LSATIS11R_A', axis=1)
+train_y = train['LSATIS11R_A']
+
+test_x = test.drop('LSATIS11R_A', axis=1)
+test_y = test['LSATIS11R_A']
 
 # Setting up our network for multi-class classification
 
@@ -98,14 +144,29 @@ train, test = train_test_split(df, test_size=0.2)
 act = 'relu'
 
 
-inputs = keras.Input(shape=(12,), dtype=tf.int16)
-dense1 = layers.Dense(128, activation=act)
+inputs = keras.Input(shape=(16,), dtype=tf.int16)
+'''
+dense1 = layers.Dense(32, activation=act)
 x = dense1(inputs)
+x = layers.Dense(64, activation=act)(x)
 x = layers.Dense(128, activation=act)(x)
+x = layers.Dense(64, activation=act)(x)
+x = layers.Dense(32, activation=act)(x)
 outputs = layers.Dense(11)(x)
+'''
+
+dense1 = layers.Dense(32, activation=act)
+x = dense1(inputs)
+outputs = layers.Dense(11, activation='softmax')(x)
 
 model = keras.Model(inputs=inputs, outputs=outputs, name="mentalhealth_model")
 
 model.summary()
+
+model.compile(optimizer='adam',
+                loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+                metrics=['accuracy'])
+
+model.fit(train_x, train_y, epochs=10, batch_size=2)
 
 
