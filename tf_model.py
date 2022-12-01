@@ -115,8 +115,7 @@ df = df.drop(df[(df['WEIGHTLBTC_A'] == 996) | (df['CITZNSTP_A'] == 8)
 | (df['PIPEEV_A'] == 8)
 | (df['LSATIS11R_A'] > 10)].index)
 '''
-
-
+#'''
 df = df.drop(df[(df['WEIGHTLBTC_A'] > 300) | (df['CITZNSTP_A'] > 2)
 | (df['NATUSBORN_A'] > 2) | (df['FDSCAT3_A'] == 8) | (df['INCWRKO_A'] > 2)
 | (df['HOUTENURE_A'] > 3) | (df['SUPPORT_A'] > 5) | (df['SMKEV_A'] > 2)
@@ -124,8 +123,7 @@ df = df.drop(df[(df['WEIGHTLBTC_A'] > 300) | (df['CITZNSTP_A'] > 2)
 | (df['ECIGEV_A'] > 2) | (df['SCHCURENR_A'] > 2) | (df['MARITAL_A'] > 3)
 | (df['PIPEEV_A'] > 2)
 | (df['LSATIS11R_A'] > 10)].index)
-
-
+#'''
 
 print(df.shape)
 
@@ -143,30 +141,43 @@ test_y = test['LSATIS11R_A']
 # Activation function to use for our inner layers
 act = 'relu'
 
-
 inputs = keras.Input(shape=(16,), dtype=tf.int16)
-'''
+norm = layers.Normalization(axis=-1)(inputs)
+
+#'''
 dense1 = layers.Dense(32, activation=act)
 x = dense1(inputs)
 x = layers.Dense(64, activation=act)(x)
 x = layers.Dense(128, activation=act)(x)
 x = layers.Dense(64, activation=act)(x)
 x = layers.Dense(32, activation=act)(x)
-outputs = layers.Dense(11)(x)
+#'''
+
+'''
+dense1 = layers.Dense(32, activation=act)
+x = dense1(norm)
 '''
 
-dense1 = layers.Dense(32, activation=act)
-x = dense1(inputs)
-outputs = layers.Dense(11, activation='softmax')(x)
+outputs = layers.Dense(1)(x)
 
 model = keras.Model(inputs=inputs, outputs=outputs, name="mentalhealth_model")
 
 model.summary()
 
 model.compile(optimizer='adam',
-                loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
-                metrics=['accuracy'])
+                loss=tf.keras.losses.MeanAbsoluteError())
 
-model.fit(train_x, train_y, epochs=10, batch_size=2)
+history = model.fit(train_x, train_y, epochs=200, batch_size=8, validation_split=0.25)
 
+def plot_loss(history):
+    plt.plot(history.history['loss'], label='loss')
+    plt.plot(history.history['val_loss'], label='val_loss')
+    plt.xlabel('Epoch')
+    plt.ylabel('Error (MAE)')
+    plt.title('Mean Absolute Error for Overall Life Satisfaction regression')
+    plt.legend()
+    plt.grid(True)
+    plt.savefig('training_loss.png')
+    plt.show()
 
+plot_loss(history)
