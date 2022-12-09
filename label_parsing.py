@@ -1,6 +1,3 @@
-from bdb import effective
-
-
 class label_parser():
     def __init__(self):
         self.label_dict = self.create_dict()

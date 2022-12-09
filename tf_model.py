@@ -4,6 +4,7 @@ from tensorflow import keras
 from tensorflow.keras import layers
 import pandas as pd
 import matplotlib.pyplot as plt
+import os
 from sklearn.model_selection import train_test_split
 print(tf.__version__)
 import warnings
@@ -127,6 +128,7 @@ df = df.drop(df[(df['WEIGHTLBTC_A'] > 300) | (df['CITZNSTP_A'] > 2)
 
 print(df.shape)
 
+# Split into testing and training data
 train, test = train_test_split(df, test_size=0.2)
 
 # Get the correct columns for training
@@ -141,6 +143,7 @@ test_y = test['LSATIS11R_A']
 # Activation function to use for our inner layers
 act = 'relu'
 
+# Create the inputs + a normalization layer
 inputs = keras.Input(shape=(16,), dtype=tf.int16)
 norm = layers.Normalization(axis=-1)(inputs)
 
@@ -158,8 +161,10 @@ dense1 = layers.Dense(32, activation=act)
 x = dense1(norm)
 '''
 
+# Outputs layer
 outputs = layers.Dense(1)(x)
 
+# Construct and compile the model
 model = keras.Model(inputs=inputs, outputs=outputs, name="mentalhealth_model")
 
 model.summary()
@@ -167,7 +172,17 @@ model.summary()
 model.compile(optimizer='adam',
                 loss=tf.keras.losses.MeanAbsoluteError())
 
-history = model.fit(train_x, train_y, epochs=200, batch_size=8, validation_split=0.25)
+# Set up the checkpointing
+checkpoint_path = "training/cp.ckpt"
+checkpoint_dir = os.path.dirname(checkpoint_path)
+
+# Create a callback that saves the model's weights
+cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path,
+                                                 save_weights_only=True,
+                                                 verbose=1)
+
+# Actually train the model
+history = model.fit(train_x, train_y, epochs=200, batch_size=8, validation_split=0.25, callbacks=[cp_callback])
 
 def plot_loss(history):
     plt.plot(history.history['loss'], label='loss')
@@ -180,4 +195,9 @@ def plot_loss(history):
     plt.savefig('training_loss.png')
     plt.show()
 
+# Plot the loss
 plot_loss(history)
+
+# Evaluate on the withheld test data
+test_result = model.evaluate(test_x, test_y)
+print(test_result)
